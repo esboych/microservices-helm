@@ -10,16 +10,16 @@ Only the `calc` microservice is exposed to the outer world. (The Ingress resourc
 
 ## To make services work you may need:
 - Deploy the Kubernetes cluster:
- ```bash
+ ```
  cd k8s/
  ./run_cluster.sh
  ```
 - Install ingress-cotroller
- ```bash
+ ```
  ./install_ingress_nginx.sh
  ``` 
 - Install Helm and Tiller:
- ```bash
+ ```
  ./init_Helm.sh
  ```
 - Deploy the Helm chart:
@@ -32,26 +32,26 @@ Only the `calc` microservice is exposed to the outer world. (The Ingress resourc
 ## Testing  
   The cluster is deployed in "gossip" configuration on AWS so only Amazon-provided DNS names of Load Balancers are accessible publicly.
   To get the entry point of "calc" service you may run:
-  ```bash
+  ```
   kubectl get ing
   ```
   The output would be something like:
-  ```bash
+  ```
   NAME                       HOSTS   ADDRESS                                                                  PORTS   AGE
   calc-ingress-<helm-release-name>   *.com   <elb-address-hash>.eu-west-1.elb.amazonaws.com   80      9m2s
   ```
   That is the publicly visible ELB entry point which maps to the `calc` service via the Ingress resource.
   Now you are able to test the service:
-  ```bash
+  ```
   curl "<elb-address-hash>.eu-west-1.elb.amazonaws.com/calc?vf=200&vi=5&t=123"
   ```
   If everything is good you'll get an answer:
-  ```bash
+  ```
   {"a":1.5853658536585367}
   ```
 ## Cleanup
 After the testing in order to clean up resources you need to run:
-```bash
+```
  ./k8s/delete_cluster.sh
  ```
  To cleanup only Helm-created resources:
