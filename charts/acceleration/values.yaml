@@ -1,0 +1,56 @@
+# values.yaml: default values for acceleration chart
+
+# replicas: number of per service replicas
+replicas: 2
+
+# pullPolicy: when to pull a docker image
+pullPolicy: Always
+
+# calcService: parameters of src/acceleration-calc microservice
+calcService:
+  serviceName: calc-service
+  appName: calc-app
+  image: esboych/acceleration-calc:0.2
+  port: 80
+  targetPort: 3000
+  cpuRequests: "100m"
+  cpuLimits: "300m"
+  memoryRequests: "250Mi"
+  memoryLimits: "1024Mi"
+  dvUrl: "http://dv-service/dv"
+  aUrl: "http://a-service/a"
+
+# dvService: parameters of src/acceleration-dv microservice
+dvService:
+  serviceName: dv-service
+  appName: dv-app
+  image: esboych/acceleration-dv:0.2
+  port: 80
+  targetPort: 3001
+  cpuRequests: "50m"
+  cpuLimits: "300m"
+  memoryRequests: "250Mi"
+  memoryLimits: "512Mi"
+  livenessDelay: 5
+  livenessPeriod: 5
+
+# aService: parameters of src/acceleration-a microservice
+aService:
+  serviceName: a-service
+  appName: a-app
+  image: esboych/acceleration-a:0.2
+  port: 80
+  targetPort: 3002
+  cpuRequests: "50m"
+  cpuLimits: "300m"
+  memoryRequests: "250Mi"
+  memoryLimits: "512Mi"
+  livenessDelay: 5
+  livenessPeriod: 5
+
+# ingress object for acceleration chart
+ingress:
+  name: calc-ingress
+  host: "*.com"
+
+

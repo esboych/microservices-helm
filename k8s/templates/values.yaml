@@ -1,0 +1,21 @@
+# values.yaml:
+
+region: eu-west-1
+zone: eu-west-1a
+s3Bucket: test-kops-join
+environment: staging
+image: kope.io/k8s-1.12-debian-stretch-amd64-hvm-ebs-2019-05-13
+awsMachineTypeNode: t2.small
+awsMachineTypeMaster: t2.medium
+awsMachineTypeAg: t2.medium
+nodeCount: "2"
+k8sVersion: "1.12.0"
+vpcCidr: 172.31.0.0/16
+apiAccessCidr: 0.0.0.0/0
+sshAccessCidr: 0.0.0.0/0
+examplePublicKey: "ssh-rsa ..."
+locksmith:
+  windowStart: Mon 16:00 # 8am Monday PST
+  windowLength: 4h
+clusterSubdomain: test-kops-join
+subnetCidr: 172.31.0.0/24

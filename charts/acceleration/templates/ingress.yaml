@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.ingress.name }}-{{ .Release.Name }}
+spec:
+  rules:
+    - host: "*.com"
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ .Values.calcService.serviceName }}-{{ .Release.Name }}
+              servicePort: {{ .Values.calcService.port }}
+

@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.calcService.serviceName }}-{{ .Release.Name }}
+spec:
+  selector:
+    app: {{ .Values.calcService.appName }}-{{ .Release.Name }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.calcService.port }}
+      targetPort: {{ .Values.calcService.targetPort }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.calcService.appName }}-{{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.calcService.appName }}-{{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.calcService.appName }}-{{ .Release.Name }}
+    spec:
+      containers:
+        - name: webserver
+          image: {{ .Values.calcService.image }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          env:
+            - name: DV_URL
+              value: "http://{{ .Values.dvService.serviceName }}-{{ .Release.Name }}/dv"
+            - name: A_URL
+              value: "http://{{ .Values.aService.serviceName }}-{{ .Release.Name }}/a"
+            - name: WEB_PORT
+              value: {{ .Values.calcService.targetPort | quote }}
+          ports:
+            - containerPort: {{ .Values.calcService.targetPort }}
+          resources:
+            requests:
+              memory: {{ .Values.calcService.memoryRequests }}
+              cpu: {{ .Values.calcService.cpuRequests }}
+            limits:
+              memory: {{ .Values.calcService.memoryLimits }}
+              cpu: {{ .Values.calcService.cpuLimits }}

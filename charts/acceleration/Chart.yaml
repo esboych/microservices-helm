@@ -1,0 +1,7 @@
+name: acceleration
+description: Deploy 3 microservices and expose one publicly
+version: 0.1.0
+home: https://github.com/esboych
+sources:
+  - https://github.com/esboych
+appVersion: 0.1

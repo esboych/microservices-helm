@@ -1,0 +1,137 @@
+apiVersion: kops/v1alpha2
+kind: Cluster
+metadata:
+  name: test-kops-join.k8s.local
+spec:
+#  version is fixed on 1.4.0 which lacks RBAC
+#  addons:
+#    - manifest: ingress-nginx
+  hooks:
+    - manifest: |
+        [Unit]
+        Description=Create example user
+        ConditionPathExists=!/home/example/.ssh/authorized_keys
+
+        [Service]
+        Type=oneshot
+        ExecStart=/bin/sh -c 'useradd example && echo "ssh-rsa ..." > /home/example/.ssh/authorized_keys'
+      name: useradd-example.service
+      roles:
+        - Node
+        - Master
+    - manifest: |
+        Type=oneshot
+        ExecStart=/usr/bin/coreos-cloudinit --from-file=/home/core/cloud-config.yaml
+      name: reboot-window.service
+      roles:
+        - Node
+        - Master
+  kubeAPIServer:
+    #authorizationRbacSuperUser: admin
+    featureGates:
+      TaintBasedEvictions: "true"
+  kubeControllerManager:
+    featureGates:
+      TaintBasedEvictions: "true"
+    horizontalPodAutoscalerUseRestClients: false
+  kubeScheduler:
+    featureGates:
+      TaintBasedEvictions: "true"
+  kubelet:
+    featureGates:
+      TaintBasedEvictions: "true"
+  fileAssets:
+    - content: |
+        yes
+      name: docker-1.12
+      path: /etc/coreos/docker-1.12
+      roles:
+        - Node
+        - Master
+    - content: |
+        #cloud-config
+        coreos:
+          update:
+            reboot-strategy: "etcd-lock"
+          locksmith:
+            window-start: Mon 16:00
+            window-length: 4h
+      name: cloud-config.yaml
+      path: /home/core/cloud-config.yaml
+      roles:
+        - Node
+        - Master
+  api:
+    loadBalancer:
+      type: Public
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  configBase: s3://test-kops-join/test-kops-join.k8s.local
+  etcdClusters:
+    - etcdMembers:
+        - instanceGroup: master-eu-west-1a
+          name: a
+      name: main
+    - etcdMembers:
+        - instanceGroup: master-eu-west-1a
+          name: a
+      name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubernetesApiAccess:
+    - 0.0.0.0/0
+  kubernetesVersion: 1.12.0
+  masterPublicName: api.test-kops-join.k8s.local
+  networkCIDR: 172.31.0.0/16
+  networking:
+    canal: {}
+  nonMasqueradeCIDR: 100.64.0.0/10
+  sshAccess:
+    - 0.0.0.0/0
+  subnets:
+    - cidr: 172.31.0.0/24
+      name: eu-west-1a
+      type: Public
+      zone: eu-west-1a
+  topology:
+    dns:
+      type: Public
+    masters: public
+    nodes: public
+---
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: test-kops-join.k8s.local
+  name: master-eu-west-1a
+spec:
+  image: kope.io/k8s-1.12-debian-stretch-amd64-hvm-ebs-2019-05-13
+  machineType: t2.medium
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    kops.k8s.io/instancegroup: master-eu-west-1a
+  role: Master
+  subnets:
+    - eu-west-1a
+---
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  name: ag.test-kops-join.k8s.local
+  labels:
+    kops.k8s.io/cluster: test-kops-join.k8s.local
+spec:
+  image: kope.io/k8s-1.12-debian-stretch-amd64-hvm-ebs-2019-05-13
+  machineType: t2.medium
+  maxSize: 10
+  minSize: 1
+  nodeLabels:
+    kops.k8s.io/instancegroup: ag.test-kops-join.k8s.local
+  role: Node
+  subnets:
+    - eu-west-1a
