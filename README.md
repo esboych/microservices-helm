@@ -1,11 +1,12 @@
 # The microservices stack deployed with the Helm in a prod-alike Kubernetes cluster.
-The k8s cluster is deployed on AWS and consists of two EC2 instances: one master and one worker node. Additionally there are two Load Balancers: one for kube-api access and another as a ingess controller gateway. 
-Only the `calc` microservice is exposed to the outer world. The Ingress resource and nginx-based ingress controler and is in charge of exposing the `calc` service to the web.
+The k8s cluster is deployed on AWS and consists of two EC2 instances: one master and one worker node. Additionally there are two Load Balancers: one for kube-api access and another serving as an Ingess controller gateway. 
+Only the `calc` microservice is exposed to the outer world. (The Ingress resource and nginx-based Ingress controler are in charge of that).
 ## The project structure
 - `/k8s` directory contains scripts for deploy and stop Kubernetes cluster, deploy Helm and Ingress-controller. 
 (The latter is supposed to be a kops addon and deployed in declarative way as a part of template. However at the moment the out-of-the-box version lacks RBAC support). 
-- `/src` directory contains the code of microservices.
+- `/src` directory contains the app code of microservices.
 - `/charts` directory contains the Helm chart files.
+
 ##To make services work you may need:
 - Deploy the Kubernetes cluster:
  ```bash
@@ -21,11 +22,12 @@ Only the `calc` microservice is exposed to the outer world. The Ingress resource
  ./init_Helm.sh
  ```
 - Deploy the Helm chart:
- ```bash
-  cd..
+ ```
+  cd ..
   cd charts/
   helm install acceleration
   ```
+  
 ##Testing  
   The cluster is deployed in "gossip" configuration on AWS so only Amazon-provided DNS names of Load Balancers are accessible publicly.
   To get the entry point of "calc" service you may run:
