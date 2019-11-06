@@ -5,9 +5,13 @@ RUN apk add --no-cache bash curl net-tools
 RUN npm config set unsafe-perm true
 RUN npm install -g yarn
 
+RUN ls -la
+
 WORKDIR /
 
 COPY . /
+
+RUN ls -la
 
 RUN yarn install
 RUN yarn build
