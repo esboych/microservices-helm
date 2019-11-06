@@ -13,8 +13,7 @@ kubectl create -f $TEMPLATES_DIR/tiller-rbac.yaml
 
 # init helm with correct RBAC
 helm init \
-    --service-account tiller \
-    --history-max 200 \
+curl -L https://git.io/get_helm.sh | bash    --history-max 200 \
     --upgrade
 
 # check helm
