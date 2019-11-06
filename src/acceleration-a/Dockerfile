@@ -9,7 +9,7 @@ RUN pwd
 RUN ls -la
 
 #WORKDIR /
-WORKDIR /src/acceleration-a/
+#WORKDIR /src/acceleration-a/
 
 #COPY . /
 COPY /src/acceleration-a/ .
