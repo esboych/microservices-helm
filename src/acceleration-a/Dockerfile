@@ -8,9 +8,11 @@ RUN npm install -g yarn
 RUN pwd
 RUN ls -la
 
-WORKDIR /
+#WORKDIR /
+WORKDIR /src/acceleration-a/
 
-COPY . /
+#COPY . /
+COPY /src/acceleration-a/ .
 
 RUN pwd
 RUN ls -la
