@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="edf21e1c-4498-4b0b-85c6-467f5d3c8811" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/acceleration-a/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/src/acceleration-a/Dockerfile" afterDir="false" />
-    </list>
+    <list default="true" id="edf21e1c-4498-4b0b-85c6-467f5d3c8811" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

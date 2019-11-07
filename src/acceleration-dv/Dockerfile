@@ -5,9 +5,9 @@ RUN apk add --no-cache bash curl net-tools
 RUN npm config set unsafe-perm true
 RUN npm install -g yarn
 
-WORKDIR /
+#WORKDIR /
 
-COPY . /
+COPY src/acceleration-dv/ .
 
 RUN yarn install
 RUN yarn build
