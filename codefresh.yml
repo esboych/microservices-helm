@@ -1,0 +1,82 @@
+version: "1.0"
+mode: parallel
+stages:
+  - "prep"
+  - "clone"
+  - "build"
+steps:
+  print_vars:
+    title: "Test env vars..."
+    image: "alpine"
+    commands:
+      - ls
+      - echo ${AWS_ACCESS_KEY_ID}
+      - echo ${{AWS_ACCESS_KEY_ID}}
+      - echo ${AWS_SECRET_ACCESS_KEY}
+  main_clone:
+    type: "git-clone"
+    description: "Cloning main repository..."
+    repo: "esboych/microservices-helm"
+    revision: "${{CF_BRANCH}}"
+    stage: "clone"
+    when:
+      steps:
+       - name: print_vars
+  build_a:
+    title: "Building Docker Image"
+    type: "build"
+    image_name: "esboych/microservices-helm-a"
+    tag: "${{CF_BRANCH_TAG_NORMALIZED}}"
+    dockerfile: "src/acceleration-a/Dockerfile"
+    no_cache: true
+    no_cf_cache: true
+    stage: "build"
+    when:
+      steps:
+       - name: main_clone
+         on:
+           - success
+  build_b:
+    title: "Building Docker Image"
+    type: "build"
+    image_name: "esboych/microservices-helm-dv"
+    tag: "${{CF_BRANCH_TAG_NORMALIZED}}"
+    dockerfile: "src/acceleration-dv/Dockerfile"
+    no_cache: true
+    no_cf_cache: true
+    stage: "build"
+    when:
+      steps:
+       - name: main_clone
+         on:
+           - success
+
+  push_a:
+    title: "Pushing image to cfcr"
+    type: "push"
+    image_name: "esboych/microservices-helm-a"
+    registry: "cfcr"
+    candidate: "${{build_a}}"
+    tags:
+      - "${{CF_BRANCH_TAG_NORMALIZED}}"
+      - "${{CF_REVISION}}"
+    when:
+      steps:
+       - name: build_a
+         on:
+           - success
+
+  push_b:
+    title: "Pushing image to cfcr"
+    type: "push"
+    image_name: "esboych/microservices-helm-dv"
+    registry: "cfcr"
+    candidate: "${{build_b}}"
+    tags:
+      - "${{CF_BRANCH_TAG_NORMALIZED}}"
+      - "${{CF_REVISION}}"
+    when:
+      steps:
+       - name: build_b
+         on:
+           - success
